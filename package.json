@@ -1,0 +1,12 @@
+{
+  "name": "it293webplanner",
+  "version": "1.0.0",
+  "description": "This repository holds the client and server code utilized for the planning web app made for GMU's IT 293 students.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

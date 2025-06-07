@@ -1,0 +1,61 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: degree_planner
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install backend deps
+        working-directory: server/graphql
+        run: npm ci
+
+      - name: Run backend tests
+        working-directory: server/graphql
+        run: npm test
+
+      - name: Install frontend deps
+        working-directory: client
+        run: npm ci
+
+      - name: Run frontend tests
+        working-directory: client
+        run: npm run test
+
+      - name: Build Docker images
+        run: docker-compose build
+
+      - name: Run Docker containers
+        run: docker-compose up -d
+
+      - name: Wait for services to be ready
+        run: |
+          sleep 10
+          curl -f http://localhost:80 || exit 1
+          curl -f http://localhost:4000/graphql || exit 1
+          curl -f http://localhost:5173 || exit 1
+
+      - name: Run Vitest
+        working-directory: client
+        run: npm run test 

@@ -1,0 +1,15 @@
+FROM rockylinux:9 AS base
+
+# Install common dependencies
+RUN dnf -y install \
+    httpd \
+    nodejs \
+    npm \
+    git \
+    && dnf clean all
+
+# Set up working directories for each service
+RUN mkdir -p /app/frontend /app/backend /app/apache
+
+# Set working directory
+WORKDIR /app 
