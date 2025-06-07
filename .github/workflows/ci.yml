@@ -27,6 +27,12 @@ jobs:
         with:
           node-version: 20
 
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose-plugin
+          sudo ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose
+
       - name: Install backend deps
         working-directory: server/graphql
         run: npm ci
